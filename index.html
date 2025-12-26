@@ -18,24 +18,18 @@
   
   <button id="loginBtn">התחבר עם Kick עכשיו 😈</button>
   
-  <div id="status">מחכה להתחברות...</div>
+  <div id="status">מחכה להתחברות... (F12 -> Console כדי לראות לוגים)</div>
   
   <div id="chat-log">הצ'אט יופיע כאן אחרי login + channel</div>
 
   <script>
-    // Client ID שלך – עכשיו עם הערך האמיתי!
     const CLIENT_ID = "01KDC3AN5CM7P4Y8TYQD8C3P9H";
-
-    // Redirect URI – חייב להיות זהה ב-100% למה שרשום באפליקציה ב-Kick Developer Portal
-    const REDIRECT_URI = "https://shemtovamir.github.io/shilobattle/";
-
-    // Scopes – מה שאתה צריך (תוסיף אם בא לך chat:write וכו')
+    const REDIRECT_URI = "https://shemtovamir.github.io/shilobattle/";  // בלי / בסוף
     const SCOPES = "user:read channel:read chat:read";  // אפשר להוסיף chat:write אם צריך
 
     const status = document.getElementById("status");
     const loginBtn = document.getElementById("loginBtn");
 
-    // פונקציה ליצירת PKCE code challenge (מודרני ומאובטח)
     async function generateCodeChallenge() {
       const codeVerifier = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))))
         .replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
@@ -47,8 +41,7 @@
     }
 
     loginBtn.onclick = async () => {
-      status.textContent = "שולח אותך ל-Kick... תחזור לכאן אחרי אישור";
-
+      status.textContent = "שולח אותך ל-Kick... אל תברח עכשיו 😂";
       const { verifier, challenge } = await generateCodeChallenge();
       localStorage.setItem("code_verifier", verifier);
 
@@ -59,12 +52,11 @@
       authUrl.searchParams.append("scope", SCOPES);
       authUrl.searchParams.append("code_challenge", challenge);
       authUrl.searchParams.append("code_challenge_method", "S256");
-      authUrl.searchParams.append("state", "random_state_6969"); // למניעת CSRF
+      authUrl.searchParams.append("state", "random_state_6969");
 
       window.location.href = authUrl.toString();
     };
 
-    // טיפול בקאלבק (חוזרים עם ?code=... ב-URL)
     window.onload = async () => {
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
@@ -72,44 +64,56 @@
       const error = params.get("error");
 
       if (error) {
-        status.textContent = "שגיאה מ-Kick: " + error + " 😭 תבדוק redirect URI או Client ID";
+        status.textContent = `Kick זרק: ${error} 😭 תבדוק redirect URI בדיוק!`;
         return;
       }
 
       if (code && state === "random_state_6969") {
         const verifier = localStorage.getItem("code_verifier");
-        if (!verifier) {
-          status.textContent = "איבדתי את ה-verifier... נסה שוב יא חתיכת בלגניסט";
-          return;
-        }
+        if (!verifier) return status.textContent = "איבדתי את ה-verifier... נסה שוב יא חתיכת בלגן";
 
-        status.textContent = "מקבל טוקן... תחזיק חזק";
+        status.textContent = "מנסה להביא טוקן... תחזיק לי את היד 💀";
 
         try {
-          const tokenResponse = await fetch("https://id.kick.com/oauth/token", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({
-              grant_type: "authorization_code",
-              code,
-              redirect_uri: REDIRECT_URI,
-              client_id: CLIENT_ID,
-              code_verifier: verifier,
-            })
+          const bodyParams = new URLSearchParams({
+            grant_type: "authorization_code",
+            code,
+            redirect_uri: REDIRECT_URI,
+            client_id: CLIENT_ID,
+            code_verifier: verifier,
+            // ←←← כאן שים את ה-SECRET שלך! ↓↓↓
+            client_secret: "e8cd15804b94df8b4eb148856583a44a8448f40354273a12efdca6700b96797a",  // ← הדבק כאן את ה-client secret שקיבלת מ-Kick
           });
 
-          const data = await tokenResponse.json();
+          const tokenResponse = await fetch("https://id.kick.com/oauth/token", {
+            method: "POST",
+            headers: { 
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Accept": "application/json"
+            },
+            body: bodyParams
+          });
+
+          console.log("Status:", tokenResponse.status);
+          const text = await tokenResponse.text();
+          console.log("Raw response:", text);
+
+          if (!text.trim()) {
+            throw new Error("Body ריק לגמרי! 200 אבל כלום... בדוק client_secret / redirect");
+          }
+
+          const data = JSON.parse(text);
+
           if (data.access_token) {
             localStorage.setItem("kick_token", data.access_token);
-            status.innerHTML = `התחברת בהצלחה! 🎉<br>Access Token: ${data.access_token.slice(0,20)}... (השאר מוסתר כי זה סודי 😏)<br>עכשיו אפשר להתחיל case battle!`;
-            
-            // נקה את ה-URL כדי שלא יישאר code גלוי
+            status.innerHTML = `יאללה גבר! התחברת! 🎉<br>Token: ${data.access_token.slice(0,25)}...`;
             window.history.replaceState({}, document.title, "/");
           } else {
-            status.textContent = "משהו השתבש... " + (data.error_description || "לא יודע מה קרה");
+            status.textContent = `שגיאה מ-Kick: ${data.error || "לא ידוע"} - ${data.error_description || ""}`;
           }
         } catch (err) {
-          status.textContent = "שגיאה בהחלפת קוד לטוקן: " + err.message;
+          console.error("שגיאה:", err);
+          status.textContent = "קריסה בהחלפה: " + err.message + " (תסתכל בקונסולה F12)";
         }
       }
     };
