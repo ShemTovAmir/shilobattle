@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kick Case Battle – התחבר יא מניאק</title>
+  <style>
+    body { margin:0; font-family:Arial; background:#0a0015; color:#fff; text-align:center; padding:50px; }
+    h1 { color:#ff3366; text-shadow:0 0 20px #ff3366; }
+    button { padding:18px 50px; font-size:1.6rem; margin:20px; border-radius:50px; cursor:pointer; }
+    #loginBtn { background:#00ff9d; color:black; border:none; }
+    #status { margin:40px; font-size:1.4rem; color:#00ff9d; }
+    #chat-log { max-width:600px; margin:40px auto; background:rgba(0,0,0,0.6); padding:20px; border-radius:12px; max-height:400px; overflow-y:auto; text-align:right; }
+  </style>
+</head>
+<body>
+  <h1>Case Battle 18+ – התחבר עם Kick כדי לקרוא צ'אט 🔥🎰</h1>
+  
+  <button id="loginBtn">התחבר עם Kick עכשיו 😈</button>
+  
+  <div id="status">מחכה להתחברות... (צריך Client ID אמיתי)</div>
+  
+  <div id="chat-log">הצ'אט יופיע כאן אחרי login + channel</div>
+
+  <script>
+    // ←←← שנה את זה!!! ←←←
+    const CLIENT_ID = "01KDC3AN5CM7P4Y8TYQD8C3P9H";          // מהפורטל של Kick
+    const REDIRECT_URI = "http://localhost:5500/callback"; // או הדומיין שלך
+    const SCOPES = "user:read channel:read chat:write";   // מה שאתה צריך
+
+    const status = document.getElementById("status");
+    const loginBtn = document.getElementById("loginBtn");
+
+    // פונקציה ליצירת PKCE code challenge
+    async function generateCodeChallenge() {
+      const codeVerifier = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))))
+        .replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+      const encoder = new TextEncoder();
+      const data = await crypto.subtle.digest("SHA-256", encoder.encode(codeVerifier));
+      const challenge = btoa(String.fromCharCode(...new Uint8Array(data)))
+        .replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+      return { verifier: codeVerifier, challenge };
+    }
+
+    loginBtn.onclick = async () => {
+      if (!CLIENT_ID || CLIENT_ID === "01KDC3AN5CM7P4Y8TYQD8C3P9H") {
+        status.textContent = "תחליף Client ID קודם יא חתיכת עצלן 😂";
+        return;
+      }
+
+      status.textContent = "שולח אותך ל-Kick... תחזור לכאן אחרי אישור";
+
+      const { verifier, challenge } = await generateCodeChallenge();
+      localStorage.setItem("code_verifier", verifier);
+
+      const authUrl = new URL("https://id.kick.com/oauth/authorize");
+      authUrl.searchParams.append("client_id", CLIENT_ID);
+      authUrl.searchParams.append("redirect_uri", REDIRECT_URI);
+      authUrl.searchParams.append("response_type", "code");
+      authUrl.searchParams.append("scope", SCOPES);
+      authUrl.searchParams.append("code_challenge", challenge);
+      authUrl.searchParams.append("code_challenge_method", "S256");
+      authUrl.searchParams.append("state", "random_state_6969"); // anti-CSRF
+
+      window.location.href = authUrl.toString();
+    };
+
+    // טיפול בקאלבק (אחרי שחוזרים מה-login)
+    window.onload = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const state = params.get("state");
+
+      if (code && state === "random_state_6969") {
+        const verifier = localStorage.getItem("code_verifier");
+        if (!verifier) return;
+
+        status.textContent = "מקבל טוקן... נשמע כמו סקס טוב";
+
+        try {
+          const tokenResponse = await fetch("https://id.kick.com/oauth/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+              grant_type: "authorization_code",
+              code,
+              redirect_uri: REDIRECT_URI,
+              client_id: CLIENT_ID,
+              code_verifier: verifier,
+            })
+          });
+
+          const data = await tokenResponse.json();
+          if (data.access_token) {
+            localStorage.setItem("kick_token", data.access_token);
+            status.innerHTML = `התחברת בהצלחה! 🎉<br>Access Token: ${data.access_token.slice(0,20)}...`;
+            // כאן אפשר להתחיל לקרוא צ'אט / לפתוח case battle עם הצ'אט וכו'
+          } else {
+            status.textContent = "משהו השתבש... " + (data.error || "לא יודע מה קרה");
+          }
+        } catch (err) {
+          status.textContent = "שגיאה: " + err.message;
+        }
+      }
+    };
+  </script>
+</body>
+</html>
