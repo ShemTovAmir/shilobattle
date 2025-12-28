@@ -1,122 +1,529 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kick Case Battle – התחבר יא מניאק</title>
-  <style>
-    body { margin:0; font-family:Arial; background:#0a0015; color:#fff; text-align:center; padding:50px; }
-    h1 { color:#ff3366; text-shadow:0 0 20px #ff3366; }
-    button { padding:18px 50px; font-size:1.6rem; margin:20px; border-radius:50px; cursor:pointer; }
-    #loginBtn { background:#00ff9d; color:black; border:none; }
-    #status { margin:40px; font-size:1.4rem; color:#00ff9d; }
-    #chat-log { max-width:600px; margin:40px auto; background:rgba(0,0,0,0.6); padding:20px; border-radius:12px; max-height:400px; overflow-y:auto; text-align:right; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE DELIVERY CREW 🍕 | מוזיקה וביטים</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- משתנים ועיצוב בסיסי (Variables & Reset) --- */
+        :root {
+            /* Palette: Soft Dark Theme */
+            --bg-dark: #121212;       /* Very dark grey, not pitch black */
+            --bg-card: #1e1e1e;       /* Slightly lighter for cards */
+            --bg-hover: #252525;
+            
+            --accent-red: #d64040;    /* Soft deep red (Tomato sauce) */
+            --accent-orange: #ffb74d; /* Soft warm orange (Cheese/Crust) */
+            
+            --text-main: #f0f0f0;     /* Off-white for reading comfort */
+            --text-muted: #a0a0a0;    /* Grey for secondary text */
+            
+            --spacing-section: 100px;
+            --radius-card: 20px;
+            --radius-btn: 50px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s ease; }
+        ul { list-style: none; }
+
+        /* --- אנימציות (Animations) --- */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, visibility;
+        }
+
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* --- כותרת וניווט (Header & Hero) --- */
+        header {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at top, #1e1e1e 0%, var(--bg-dark) 70%);
+            padding: 20px;
+            position: relative;
+        }
+
+        .brand-title {
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ffffff 0%, #bbbbbb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-slogan {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        .hero-btn {
+            padding: 14px 40px;
+            background: linear-gradient(45deg, var(--accent-red), #e55e5e);
+            color: white;
+            border-radius: var(--radius-btn);
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px rgba(214, 64, 64, 0.2);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(214, 64, 64, 0.3);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            animation: bounce 2s infinite;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        /* --- סקציות כללי (Sections) --- */
+        section {
+            padding: var(--spacing-section) 8%;
+        }
+
+        .section-header {
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .section-subtitle {
+            color: var(--accent-orange);
+            font-weight: 400;
+            letter-spacing: 1px;
+            font-size: 1rem;
+        }
+
+        /* --- גלריית שירים (Grid) --- */
+        .songs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .song-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .song-card:hover {
+            transform: translateY(-10px);
+            background-color: var(--bg-hover);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            background: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .card-content {
+            padding: 25px;
+            text-align: right;
+        }
+
+        .song-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .song-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .song-meta {
+            font-size: 0.85rem;
+            color: var(--accent-orange);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- אודות (About) --- */
+        .about-section {
+            background-color: #161616;
+            border-radius: 40px;
+            margin: 0 5%;
+            padding: 80px 5%;
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .about-icon {
+            flex: 0.5;
+            text-align: center;
+            font-size: 8rem;
+            color: var(--accent-orange);
+            opacity: 0.8;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* --- קהילה (Discord) --- */
+        .discord-section {
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #1a1a1a 100%);
+        }
+
+        .discord-btn {
+            background-color: #5865F2; /* Brand Discord Color */
+            color: white;
+            padding: 16px 50px;
+            border-radius: var(--radius-btn);
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(88, 101, 242, 0.3);
+        }
+
+        .discord-btn:hover {
+            background-color: #4752c4;
+            transform: scale(1.05);
+        }
+
+        /* --- פוטר (Footer) --- */
+        footer {
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        /* --- רספונסיביות (Responsive) --- */
+        @media (max-width: 768px) {
+            .brand-title { font-size: 2.8rem; }
+            .about-section { flex-direction: column; text-align: center; padding: 60px 20px; }
+            .section-title { font-size: 2rem; }
+            .card-content { text-align: center; }
+            .song-meta { justify-content: center; }
+        }
+    </style>
 </head>
 <body>
-  <h1>Case Battle 18+ – התחבר עם Kick כדי לקרוא צ'אט 🔥🎰</h1>
-  
-  <button id="loginBtn">התחבר עם Kick עכשיו 😈</button>
-  
-  <div id="status">מחכה להתחברות... (F12 -> Console כדי לראות לוגים)</div>
-  
-  <div id="chat-log">הצ'אט יופיע כאן אחרי login + channel</div>
 
-  <script>
-    const CLIENT_ID = "01KDC3AN5CM7P4Y8TYQD8C3P9H";
-    const REDIRECT_URI = "https://shemtovamir.github.io/shilobattle/";  // בלי / בסוף
-    const SCOPES = "user:read channel:read chat:read";  // אפשר להוסיף chat:write אם צריך
+    <header id="home">
+        <h1 class="brand-title">THE DELIVERY CREW 🍕</h1>
+        <p class="brand-slogan"></p>
+        <button class="hero-btn" onclick="document.getElementById('gallery').scrollIntoView({behavior: 'smooth'})">
+            <i class="fas fa-play"></i> האזינו עכשיו
+        </button>
+        
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </header>
 
-    const status = document.getElementById("status");
-    const loginBtn = document.getElementById("loginBtn");
+    <section id="gallery">
+        <div class="section-header fade-in-section">
+            <div class="section-subtitle">התפריט שלנו</div>
+            <h2 class="section-title">רצועות נבחרות</h2>
+        </div>
 
-    async function generateCodeChallenge() {
-      const codeVerifier = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))))
-        .replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
-      const encoder = new TextEncoder();
-      const data = await crypto.subtle.digest("SHA-256", encoder.encode(codeVerifier));
-      const challenge = btoa(String.fromCharCode(...new Uint8Array(data)))
-        .replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
-      return { verifier: codeVerifier, challenge };
-    }
+        <div class="songs-grid" id="songs-container">
+            </div>
+    </section>
 
-    loginBtn.onclick = async () => {
-      status.textContent = "שולח אותך ל-Kick... אל תברח עכשיו 😂";
-      const { verifier, challenge } = await generateCodeChallenge();
-      localStorage.setItem("code_verifier", verifier);
+    <section>
+        <div class="about-section fade-in-section">
+            <div class="about-icon">
+                <i class="fa-slab fa-regular fa-question"></i>
+            </div>
+            <div class="about-text">
+                <h2 class="section-title" style="margin-bottom: 20px;">1.1.2026</h2>
+                <p>
+soon....                </p>
+                <p>
+                </p>
+            </div>
+        </div>
+    </section>
 
-      const authUrl = new URL("https://id.kick.com/oauth/authorize");
-      authUrl.searchParams.append("client_id", CLIENT_ID);
-      authUrl.searchParams.append("redirect_uri", REDIRECT_URI);
-      authUrl.searchParams.append("response_type", "code");
-      authUrl.searchParams.append("scope", SCOPES);
-      authUrl.searchParams.append("code_challenge", challenge);
-      authUrl.searchParams.append("code_challenge_method", "S256");
-      authUrl.searchParams.append("state", "random_state_6969");
+    <section class="discord-section fade-in-section">
+        <div class="section-header">
+            <h2 class="section-title">הצטרפו למשפחה</h2>
+            <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 30px auto;">
+                רוצים לתת לנו רעיונות לשירים? לשתף את העבודות שלכם? או סתם לחפש חברים חדשים? השרת שלנו פתוח לכולם.
+            </p>
+<a href="https://discord.gg/vp4uyf644Z" target="_blank" class="discord-btn">
+    <i class="fab fa-discord"></i> הצטרפו לדיסקורד
+</a>
+        </div>
+    </section>
 
-      window.location.href = authUrl.toString();
-    };
+    <footer>
+        <div class="footer-links">
+            <a href="https://www.youtube.com/@pizzaaaaaasaaa" title="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="https://discord.gg/vp4uyf644Z" title="Discord"><i class="fab fa-discord"></i></a>
+        </div>
+        <p>&copy; 2024 THE DELIVERY CREW. כל הזכויות שמורות.</p>
+    </footer>
 
-    window.onload = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const code = params.get("code");
-      const state = params.get("state");
-      const error = params.get("error");
-
-      if (error) {
-        status.textContent = `Kick זרק: ${error} 😭 תבדוק redirect URI בדיוק!`;
-        return;
-      }
-
-      if (code && state === "random_state_6969") {
-        const verifier = localStorage.getItem("code_verifier");
-        if (!verifier) return status.textContent = "איבדתי את ה-verifier... נסה שוב יא חתיכת בלגן";
-
-        status.textContent = "מנסה להביא טוקן... תחזיק לי את היד 💀";
-
-        try {
-          const bodyParams = new URLSearchParams({
-            grant_type: "authorization_code",
-            code,
-            redirect_uri: REDIRECT_URI,
-            client_id: CLIENT_ID,
-            code_verifier: verifier,
-            // ←←← כאן שים את ה-SECRET שלך! ↓↓↓
-            client_secret: "e8cd15804b94df8b4eb148856583a44a8448f40354273a12efdca6700b96797a",  // ← הדבק כאן את ה-client secret שקיבלת מ-Kick
-          });
-
-          const tokenResponse = await fetch("https://id.kick.com/oauth/token", {
-            method: "POST",
-            headers: { 
-              "Content-Type": "application/x-www-form-urlencoded",
-              "Accept": "application/json"
+    <script>
+        // --- DATA: Song List (Hebrew) ---
+        const songs = [
+          {
+                title: "בדד (גרסת אלייצור)",
+                desc: "prod by delivery crew  מילים:שליח פיצה",
+                date: "25.12.2025",
+                id: "Qk-SCz5tzYI" // Placeholder ID
             },
-            body: bodyParams
-          });
+          {
+                title: "נו איפה אגמי",
+                desc: "prod by delivery crew  מילים:שליח פיצה,סופרביבי",
+                date: "23.12.2025",
+                id: "8w0YVC2ckpY" // Placeholder ID
+            },
+          {
+                title: "חובב טילונים",
+                desc: "prod by delivery crew  מילים:שליח פיצה",
+                date: "21.12.2025",
+                id: "EfaNca6hud4" // Placeholder ID
+            },
+          {
+                title: "PR RP",
+                desc: "prod by delivery crew  מילים:שליח פיצה",
+                date: "15.12.2025",
+                id: "UYZY7_9AExE" // Placeholder ID
+            },
+          {
+                title: "דורס חתולים",
+                desc: "prod by delivery crew מילים:סופרביבי,שליח פיצה",
+                date: "15.12.2025",
+                id: "HUk-94BBoNo" // Placeholder ID
+            },
+          {
+                title: "זה נכתב על הקיר",
+                desc: "prod by jewda  מילים:שליח פיצה",
+                date: "14.12.2025",
+                id: "5iui_j0strU" // Placeholder ID
+            },
+          {
+                title: "עודדי",
+                desc: "prod by jewda מילים:פייקר,שליח פיצה",
+                date: "12.12.2025",
+                id: "tJLwBvRo8-Y" // Placeholder ID
+            },
+          {
+                title: "החברות הלכה לפח",
+                desc: "Prod by dedashev02  מילים:שליח פיצה",
+                date: "11.12.2025",
+                id: "Xjo6v_80waE" // Placeholder ID
+            },
+          {
+                title: "רוצה רק לשדר",
+                desc: "prod by jewda מילים:שליח פיצה",
+                date: "11.12.2025",
+                id: "7_WtxyZKLQQ" // Placeholder ID
+            },
+             {
+                title: "בלי ירוק",
+                desc: "prod by jeweda מילים:שליח פיצה,פייקר,סופרביבי",
+                date: "8.12.2025",
+                id: "8vPEOIGN4js" // Placeholder ID
+            },
+            {
+                title: "עובר כבר לרחוב",
+                desc: "prod by jeweda מילים:שליח פיצה",
+                date: "7.12.2025",
+                id: "elykHp0Lzgg" // Placeholder ID
+            },
+            {
+                title: "רק רציתי לעשן בים",
+                desc: "prod by dedashav02 מילים:שליח פיצה,סופרביבי",
+                date: "4.12.2025",
+                id: "iexqa2JPL0A"
+            },
+            {
+                title: "מה שנותר",
+                desc: "prod by jewda מילים:שליח פיצה,סופרביבי",
+                date: "4.12.25",
+                id: "qkUhscX6iek"
+            },
+            {
+                title: "נוכל אחד",
+                desc: "מילים:שליח פיצה prod by jewda",
+                date: "4.12.25",
+                id: "v0cqwBpR1is"
+            },
+            {
+                title: "אהובתי תמיד בוגדת בי",
+                desc: "prod by jewda מילים:שליח פיצה,שילוקס",
+                date: "3.12.25",
+                id: "7BK-d3poQIM"
+            },
+            {
+                title: "שינתה שם משפחה",
+                desc: "prod by jewda מילים:שליח פיצה,סופרביבי",
+                date: "3.12.2025",
+                id: "z7ERc3HMYbI"
+            }
+        ];
 
-          console.log("Status:", tokenResponse.status);
-          const text = await tokenResponse.text();
-          console.log("Raw response:", text);
+        // --- Render Songs ---
+        const container = document.getElementById('songs-container');
 
-          if (!text.trim()) {
-            throw new Error("Body ריק לגמרי! 200 אבל כלום... בדוק client_secret / redirect");
-          }
+        songs.forEach((song, index) => {
+            const card = document.createElement('div');
+            card.className = 'song-card fade-in-section';
+            // Stagger animation delay slightly for grid items
+            card.style.transitionDelay = `${index * 100}ms`;
 
-          const data = JSON.parse(text);
+            card.innerHTML = `
+                <div class="video-container">
+                    <iframe 
+                        src="https://www.youtube.com/embed/${song.id}" 
+                        title="${song.title}" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen 
+                        loading="lazy">
+                    </iframe>
+                </div>
+                <div class="card-content">
+                    <h3 class="song-title">${song.title}</h3>
+                    <p class="song-desc">${song.desc}</p>
+                    <div class="song-meta">
+                        <i class="far fa-clock"></i>
+                        <span>${song.date}</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
 
-          if (data.access_token) {
-            localStorage.setItem("kick_token", data.access_token);
-            status.innerHTML = `יאללה גבר! התחברת! 🎉<br>Token: ${data.access_token.slice(0,25)}...`;
-            window.history.replaceState({}, document.title, "/");
-          } else {
-            status.textContent = `שגיאה מ-Kick: ${data.error || "לא ידוע"} - ${data.error_description || ""}`;
-          }
-        } catch (err) {
-          console.error("שגיאה:", err);
-          status.textContent = "קריסה בהחלפה: " + err.message + " (תסתכל בקונסולה F12)";
-        }
-      }
-    };
-  </script>
+        // --- Scroll Animations (Intersection Observer) ---
+        const observerOptions = {
+            threshold: 0.15, // Trigger when 15% of element is visible
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-section').forEach(el => {
+            observer.observe(el);
+        });
+
+    </script>
 </body>
 </html>
